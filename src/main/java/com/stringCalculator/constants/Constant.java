@@ -6,6 +6,6 @@ package com.stringCalculator.constants;
  * This interface includes all constants of application.
  */
 public interface Constant {
-public static final String INVALID_EXPRESSION = "INVALID EXPRESSION";
-public static final String INVALID_INPUT = "INVALID INPUT";
+ String INVALID_EXPRESSION = "INVALID EXPRESSION";
+ String INVALID_INPUT = "INVALID INPUT";
 }
