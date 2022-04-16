@@ -7,6 +7,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 /**
  * Discovery Client.
  * https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.0.0.RELEASE/single/spring-cloud-netflix.html
+ * @author Ashish Gupta 
  */
 @SpringBootApplication
 //@EnableZuulProxy

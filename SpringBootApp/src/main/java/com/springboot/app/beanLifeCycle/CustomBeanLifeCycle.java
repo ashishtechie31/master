@@ -13,7 +13,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.spotify.docker.client.shaded.javax.annotation.PostConstruct;
-
+/**
+ * 
+ * @author Ashish Gupta
+ *
+ */
 public class CustomBeanLifeCycle implements BeanNameAware,ApplicationContextAware,InitializingBean,DisposableBean,BeanPostProcessor {
 
 

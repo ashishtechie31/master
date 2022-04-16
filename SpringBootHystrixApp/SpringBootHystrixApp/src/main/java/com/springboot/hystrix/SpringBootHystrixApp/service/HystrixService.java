@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.springboot.hystrix.SpringBootHystrixApp.service;
 
 import java.util.Date;
