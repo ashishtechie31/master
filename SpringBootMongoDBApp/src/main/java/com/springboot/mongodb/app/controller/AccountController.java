@@ -1,9 +1,13 @@
 package com.springboot.mongodb.app.controller;
 
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,6 +35,8 @@ import com.springboot.mongodb.app.service.IAccountService;
 @RequestMapping(path="/accounts")
 public class AccountController {
 
+	//https://javatechonline.com/how-to-implement-redis-cache-in-spring-boot-application/
+	//https://www.tutorialspoint.com/using-redis-cache-with-spring-boot
 	@Autowired
 	private IAccountService accountService;
 	
@@ -40,17 +46,17 @@ public class AccountController {
 	@Autowired 
 	private MongoTemplate mongoTemplate;
 	
-	
-	
 	@PostMapping(value="/account",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Account saveAccountDetails(@RequestBody Account account) {		
 		account.setTimestamp(getTimeStamp());
 		Account accountresp = accountService.saveAccountDetails(account);		
 		return accountresp;
 	}
+	
 	//localhost:8070/accounts/account/13131
 	//Get Accounts By Id.
 	@GetMapping(value="/account/{accountId}")
+	@Cacheable(value="Account",key="#accountId",sync=true)
 	public ResponseEntity<Account> getAccountDetailsById(@PathVariable Integer accountId) {
 		
 		Account acccountResp =  accountMongoRepository.findByAccountId(accountId);
@@ -79,11 +85,14 @@ public class AccountController {
 	//Get All Accounts Details and sort by id.
 	//localhost:8070/accounts/accountDetails
 	@GetMapping(value="/accountDetails")
+	@Cacheable(value="accounts",sync=true)
 	public @ResponseBody List<Account> getAllAccountDetails() {		
 		List<Account> accountList =  accountMongoRepository.findAll(Sort.by(Sort.Direction.ASC,"accountId"));		
 		return accountList;
 	}
+	
 	//localhost:8070/accounts/account
+	@CachePut(value="Account")
 	@PutMapping(value="/account",consumes=MediaType.APPLICATION_JSON_VALUE,produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Account updateAccountStatus(@RequestBody Account account) {					
 		account.setTimestamp(getTimeStamp());
@@ -91,7 +100,8 @@ public class AccountController {
 		return account;
 	}
 	
-	@DeleteMapping(value="/account/{accountId}" )	
+	@DeleteMapping(value="/account/{accountId}" )
+	@CacheEvict(value="Account",key="#accountId")
 	public @ResponseBody ResponseEntity<Account> deleteAccountById(@PathVariable Integer accountId) {		
 		Query query  = new Query();
 		query.addCriteria(Criteria.where("accountId").is(accountId));		
